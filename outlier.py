@@ -8,19 +8,15 @@ Original file is located at
 """
 
 import numpy as np
-import pandas as pd
 from scipy.stats import chi2
-import matplotlib.pyplot as plt
 import math
 from scipy.stats import t
-from pyod.models.knn import KNN
+
+# from pyod.models.knn import KNN
 
 
 """正規乱数を生成してみる。"""
 
-# 正規乱数を生成
-size = 10000
-a = np.random.normal(loc=3, scale=5, size=size,)  # 平均  # 標準偏差  # 出力配列のサイズ(タプルも可)
 
 """ホテリング理論で外れ値を除去する。"""
 
@@ -35,17 +31,11 @@ class hotelling:
         # 閾値を計算する
         border = chi2.ppf(q=0.99, df=1)
         # データを標準化する
-        converted_data = (a - sample_mean) ** 2 / sample_var
+        converted_data = (array - sample_mean) ** 2 / sample_var
         # 外れ値を除外したデータを求める
-        self.result = a[converted_data < border]
+        self.result = array[converted_data < border]
         # 外れ値の比率を求める
         self.rate_of_outlier = sum(converted_data >= border) / len(array)
-
-
-instance = hotelling(a)
-print(instance.result)
-
-print(instance.rate_of_outlier)
 
 
 """スミルノフ・グラブス検定を行う。"""
@@ -65,7 +55,7 @@ class smi_test:
 
         while tmp_array.any():
             # 外れ値を除去したデータが格納されているメソッド
-            self.result = tmp_array.copy()
+            self.removed = tmp_array.copy()
             tmp_array = self.run_test(tmp_array)
 
     def run_test(self, array):
@@ -98,11 +88,29 @@ class smi_test:
         return len(self.result) / len(self.input_array)
 
 
-ins = smi_test(a)
-
-ins.rate_of_outlier()
+"""四分位範囲を利用した外れ値除去（参考：https://www.monotalk.xyz/blog/Calculate-the-interquartile-range-with-python/）"""
 
 
+class quartoiles:
+    def __init__(self, array):
+        # 第一四分位数と第三四分位数、四分位範囲を計算する。
+        quartile_1, quartile_3 = np.percentile(array, [25, 75])
+        iqr = quartile_3 - quartile_1
+
+        # 下限
+        lower_bound = quartile_1 - (iqr * 1.5)
+        # 上限
+        upper_bound = quartile_3 + (iqr * 1.5)
+
+        # 下限以上、上限未満の値のみ抽出
+        # removed = np.array(array)[((array < upper_bound) & (array >= lower_bound))]
+
+        # 上限未満の値のみ抽出
+        removed = np.array(array)[(array < upper_bound)]
+        self.removed = removed
+
+
+"""
 class knn:
     def __init__(self, array, contamination_rate=0.1):
         array = np.array(array)
@@ -115,3 +123,4 @@ class knn:
 
         # 外れ値を除外したデータを保存
         knn.result = array[np.where(outliers == 0)]
+"""
