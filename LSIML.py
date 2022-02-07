@@ -51,7 +51,16 @@ def calc_SIML(Z_n, m):
 
 
 def calc_LSIML(
-    Y, b, c, alpha, C_c, P_c, n, jump_detect=True, how_to_detect="smi", overlap_rate=0
+    Y,
+    b,
+    c,
+    alpha,
+    C_c,
+    P_c,
+    n,
+    jump_detect=False,
+    how_to_detect="quantile",
+    overlap_rate=0,
 ):
     """
     (Overlap) LSIMLを計算する関数
@@ -99,7 +108,7 @@ def calc_LSIML(
 
         ##quantileに基づいた手法を用いる
         elif how_to_detect == "quantile":
-            removed_LSIML_list = outlier.quartoiles(LSIML_list).removed
+            removed_LSIML_list = outlier.quantile(LSIML_list).removed
 
         ##how_to_detect変数が"smi"でも"quantile"でもなければエラーを吐く
         else:

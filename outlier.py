@@ -91,7 +91,7 @@ class smi_test:
 """四分位範囲を利用した外れ値除去（参考：https://www.monotalk.xyz/blog/Calculate-the-interquartile-range-with-python/）"""
 
 
-class quartoiles:
+class quantile:
     def __init__(self, array):
         # 第一四分位数と第三四分位数、四分位範囲を計算する。
         quartile_1, quartile_3 = np.percentile(array, [25, 75])
