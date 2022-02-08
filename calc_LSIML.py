@@ -3,6 +3,42 @@ import math
 import outlier
 
 
+def calc_C_n(n):
+    """
+    C_n(本当はインバース)を計算する。
+    """
+    C_n = np.zeros([n, n])
+    for i in range(n):
+        C_n[i][i] = 1
+        if i != n - 1:
+            C_n[i + 1][i] = -1
+    C_n = np.array(C_n)
+    return C_n
+
+
+def calc_P_n(n):
+    """
+    P_nを計算する
+    """
+    P_n = np.zeros([n, n])
+    for j in range(n):
+        for k in range(
+            n
+        ):  # k = 0, 1, ..., n - 1, j = 0, 1, ,..., n - 1（論文だと1, 2,..., n）なので、少し式を工夫している
+            P_n[j][k] = math.sqrt(2 / (n + 0.5)) * math.cos(
+                2 * math.pi / (2 * n + 1) * ((k + 1) - 0.5) * ((j + 1) - 0.5)
+            )
+    P_n = np.array(P_n)
+
+    return P_n
+
+
+# bに対応したcを計算する関数
+def calc_c(n, b, overlap_rate):
+    c = int(n / (((b - 1) * (1 - overlap_rate) + 1)))
+    return c
+
+
 def calc_Z_n(Y, C_n, P_n, n):
     """
     対数価格系列YをZ_nに変換する関数(Yの長さ = Z_nの長さ + 1、初期値を含めるため)
