@@ -1,3 +1,5 @@
 mat_test.m
 test.py
 __pycache__/
+tmp.py
+*.ipynb
