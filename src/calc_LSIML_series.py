@@ -62,12 +62,12 @@ class calc_LSIML_series:
 
         # 結果を出力するための準備
         col_name_list = []
-        for i in range(len(self.b_list)): 
-            col_name_list.append("LSIML_" + "b=" + str(self.b_list[i])) 
+        for i in range(len(self.b_list)):
+            col_name_list.append("LSIML_" + "b=" + str(self.b_list[i]))
 
         self.LSIML_result_df = pd.DataFrame(
             np.array(self.LSIML_list),
-            columns= col_name_list,
+            columns=col_name_list,
         )
 
         # プロット用に時間軸を保存
@@ -85,8 +85,8 @@ class calc_LSIML_series:
 
         # 検出したジャンプ数に関する列をdfに結合
         col_name_list = []
-        for i in range(len(self.b_list)): 
-            col_name_list.append("Num_jump_" + "b=" + str(self.b_list[i])) 
+        for i in range(len(self.b_list)):
+            col_name_list.append("Num_jump_" + "b=" + str(self.b_list[i]))
 
         self.num_of_detected_jump_df = pd.DataFrame(
             self.num_of_detected_jump_list,
@@ -95,8 +95,8 @@ class calc_LSIML_series:
 
         # ジャンプの二乗和に関するdfを作成
         col_name_list = []
-        for i in range(len(self.b_list)): 
-            col_name_list.append("Size_jump_" + "b=" + str(self.b_list[i])) 
+        for i in range(len(self.b_list)):
+            col_name_list.append("Size_jump_" + "b=" + str(self.b_list[i]))
 
         self.size_jump_df = pd.DataFrame(
             self.size_jump_list,
@@ -194,18 +194,6 @@ class calc_LSIML_series:
                 how_to_detect="quantile",
                 overlap_rate=self.overlap_rate,
             )
-            """
-            if n != 17999:
-                print(Y)
-                print(b)
-                print(c)
-                print(self.alpha)
-                print(C_c)
-                print(P_c)
-                print(n)
-                print(self.overlap_rate)
-                print(result_dict["LSIML"])
-            """
 
             daily_LSIML_list.append(result_dict["LSIML"])
             daily_num_of_detected_jump_list.append(result_dict["num_of_detected_jump"])
@@ -217,15 +205,17 @@ class calc_LSIML_series:
 if __name__ == "__main__":
     # dataディレクトリにあるcsvファイルを全て読み込む
     stock_name_list = glob.glob("data/*.csv")
-    # stock_name_list = list(pd.read_csv("setting/company_name.txt", header=None)[0])
 
     # パラメータを設定する（値はtxtファイルから読み込む）
     param_df = pd.read_csv("setting/parameters.txt", sep=", ")
 
-    alpha = param_df[param_df["parameter"] == "alpha"].value[0]
-    overlap_rate = param_df[param_df["parameter"] == "alpha"].value[0]
-    # bのみ複数の値を設定したいので、リストとする。（要素は三つ。今後拡張できる）
-    b_list = list(param_df[param_df["parameter"] == "b"]["value"])
+    alpha = float(param_df[param_df["parameter"] == "alpha"].value.iloc[0])
+    overlap_rate = float(
+        param_df[param_df["parameter"] == "overlap_rate"].value.iloc[0]
+    )
+
+    # bのみ複数の値を設定したいので、リストとする
+    b_list = list(map(int, param_df[param_df["parameter"] == "b"]["value"]))
 
     # 各銘柄ごとにLSIMLの系列を計算し、csv形式で出力する
     for stock_name in stock_name_list:
