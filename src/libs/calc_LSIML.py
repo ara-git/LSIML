@@ -1,6 +1,6 @@
 import numpy as np
 import math
-import outlier
+import libs.outlier as outlier
 
 
 def calc_C_n(n):

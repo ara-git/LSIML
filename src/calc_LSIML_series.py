@@ -1,6 +1,7 @@
 """
 銘柄名(と何秒間隔のデータか)の情報を投げるとLSIMLの系列が返ってくるようなモジュール
 """
+import glob
 import pandas as pd
 import numpy as np
 import libs.calc_LSIML as calc_LSIML
@@ -63,9 +64,9 @@ class calc_LSIML_series:
         self.LSIML_result_df = pd.DataFrame(
             np.array(self.LSIML_list),
             columns=[
-                "LSIML_" + "b=" + str(self.b_list[0]) + "_sec1",
-                "LSIML_" + "b=" + str(self.b_list[1]) + "_sec1",
-                "LSIML_" + "b=" + str(self.b_list[2]) + "_sec1",
+                "LSIML_" + "b=" + str(self.b_list[0]),
+                "LSIML_" + "b=" + str(self.b_list[1]),
+                "LSIML_" + "b=" + str(self.b_list[2]),
             ],
         )
 
@@ -80,6 +81,37 @@ class calc_LSIML_series:
             self.LSIML_result_df,
             right_index=True,
             left_index=True,
+        )
+
+        # 検出したジャンプ数に関する列をdfに結合
+        self.num_of_detected_jump_df = pd.DataFrame(
+            self.num_of_detected_jump_list,
+            columns=[
+                "Num_jump_" + "b=" + str(b_list[0]),
+                "Num_jump_" + "b=" + str(b_list[1]),
+                "Num_jump_" + "b=" + str(b_list[2]),
+            ],
+        )
+
+        # ジャンプの二乗和に関するdfを作成
+        self.size_jump_df = pd.DataFrame(
+            self.size_jump_list,
+            columns=[
+                "Size_jump_" + "b=" + str(b_list[0]),
+                "Size_jump_" + "b=" + str(b_list[1]),
+                "Size_jump_" + "b=" + str(b_list[2]),
+            ],
+        )
+
+        # dfを作成
+        self.merged_result_df = pd.merge(
+            self.merged_result_df,
+            self.num_of_detected_jump_df,
+            right_index=True,
+            left_index=True,
+        )
+        self.merged_result_df = pd.merge(
+            self.merged_result_df, self.size_jump_df, right_index=True, left_index=True
         )
 
     def _calc_c_list_dict(self):
@@ -125,14 +157,16 @@ class calc_LSIML_series:
         alphaやbの値は共通なので、selfで処理する。
 
         Aug
-            Y:対数価格
+            Y:対数価格(dataframe形式)
         Return
             daily_LSIML_list:各bに対してLSIMLのリスト
             daily_num_of_detected_jump_list:各bに対するジャンプ検出数のリスト
             daily_size_jump_list:各bに対するジャンプサイズのリスト
         """
         # 対数価格を抽出し、NANを除去する
-        n = len(Y) - 1
+        n = Y.count() - 1
+        Y = Y.dropna()
+        # print(n)
         Y = np.array(Y)
 
         daily_LSIML_list = []
@@ -147,6 +181,7 @@ class calc_LSIML_series:
             P_c = self.P_c_list_dict[n][j]
             # を計算する。
             ##quantileの手法でジャンプ検出を行う
+
             result_dict = calc_LSIML.calc_LSIML(
                 Y,
                 b,
@@ -159,6 +194,19 @@ class calc_LSIML_series:
                 how_to_detect="quantile",
                 overlap_rate=self.overlap_rate,
             )
+            """
+            if n != 17999:
+                print(Y)
+                print(b)
+                print(c)
+                print(self.alpha)
+                print(C_c)
+                print(P_c)
+                print(n)
+                print(self.overlap_rate)
+                print(result_dict["LSIML"])
+            """
+
             daily_LSIML_list.append(result_dict["LSIML"])
             daily_num_of_detected_jump_list.append(result_dict["num_of_detected_jump"])
             daily_size_jump_list.append(result_dict["sum_of_jump"])
@@ -167,17 +215,24 @@ class calc_LSIML_series:
 
 
 if __name__ == "__main__":
-    stock_name_list = list(pd.read_csv("company_name.txt", header=None)[0])
+    # dataディレクトリにあるcsvファイルを全て読み込む
+    stock_name_list = glob.glob("data/*.csv")
+    # stock_name_list = list(pd.read_csv("setting/company_name.txt", header=None)[0])
 
-    stock_name = stock_name_list[0]
-    df = pd.read_csv("data/" + stock_name + "_1sec.csv")
+    for stock_name in stock_name_list:
+        print(stock_name)
+        df = pd.read_csv(stock_name)
 
-    # コマンドライン引数を読み込む
-    alpha = 0.4
-    overlap_rate = 0
-    b_list = [10, 50, 100]
+        # パラメータを設定する
+        alpha = 0.4
+        overlap_rate = 0
+        b_list = [10, 50, 100]
 
-    Ins = calc_LSIML_series(df, b_list=b_list, alpha=alpha, overlap_rate=overlap_rate)
-    LSIML_RV_df = Ins.merged_result_df
+        Ins = calc_LSIML_series(
+            df, b_list=b_list, alpha=alpha, overlap_rate=overlap_rate
+        )
+        LSIML_RV_df = Ins.merged_result_df
 
-    LSIML_RV_df.to_csv("LSIML_RV_" + stock_name + "csv", index=False, header=None)
+        # 保存用に名称変更
+        stock_name = stock_name.replace("data\\", "")
+        LSIML_RV_df.to_csv("output/LSIML_RV_" + stock_name, index=False)
