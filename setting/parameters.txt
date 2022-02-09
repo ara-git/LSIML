@@ -1,3 +1,6 @@
-alpha = 0.4
-overlap_rate = 0
-b_list = [10, 50, 100]
+parameter, value
+alpha, 0.4
+overlap_rate, 0
+b, 10
+b, 50
+b, 100
