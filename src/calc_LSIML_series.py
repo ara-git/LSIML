@@ -147,6 +147,7 @@ class calc_LSIML_series:
         RVを計算する関数
 
         """
+        Y = Y.dropna()
         RV = sum(np.diff(Y) ** 2)
 
         return RV
