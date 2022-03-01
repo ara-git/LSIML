@@ -108,4 +108,4 @@ for i in range(len(LSIML_data_list)):
         Y = data["log_tom"]
 
         result = node_ridge.ridge_rolling(X, Y)
-        print(result)
+        print(x_names, result)
