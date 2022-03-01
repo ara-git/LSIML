@@ -72,7 +72,7 @@ def ridge_rolling(X, Y):
         mod1.fit(train_x, train_y)
         """
 
-        mod1 = RidgeCV(alphas=np.array(list(range(1, 101, 20))) * 0.000001, cv=5)
+        mod1 = RidgeCV(alphas=np.array(list(range(1, 101, 20))) * 0.000001, cv=10)
         mod1.fit(train_x, train_y)
         # print(mod1.alpha_)
 
