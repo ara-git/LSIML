@@ -1,5 +1,5 @@
 """
-銘柄名(と何秒間隔のデータか)の情報を投げるとLSIMLの系列が返ってくるようなモジュール
+data/grid_dataディレクトリにあるcsvファイルを全て読み込み、LSIMLの系列を計算するモジュール
 """
 import glob
 import pandas as pd
@@ -205,7 +205,7 @@ class calc_LSIML_series:
 
 if __name__ == "__main__":
     # dataディレクトリにあるcsvファイルを全て読み込む
-    stock_name_list = glob.glob("data/*.csv")
+    stock_name_list = glob.glob("data/grid_data/*.csv")
 
     # パラメータを設定する（値はtxtファイルから読み込む）
     param_df = pd.read_csv("setting/parameters.txt", sep=", ")
