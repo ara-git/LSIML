@@ -5,5 +5,8 @@ tmp.py
 *.ipynb
 *.csv
 
-ridge
-Ridge
+ridge*
+Ridge*
+
+*ridge
+*Ridge
