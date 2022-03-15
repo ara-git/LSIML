@@ -2,20 +2,20 @@
 秒間隔株式データから、各日のLSIMLを計算するモジュール
 
 出力はcsv形式であり、
-- date: 日付
-- RV_sec1: Realized Volatilityの値
-- LSIML_b=x: LSIMLの値（ジャンプ除去済み）
-- Num_jump_b=x: 検出されたジャンプ回数
-- Size_jump_b=x: 検出されたジャンプサイズ
+- `date`: 日付
+- `RV_sec1`: Realized Volatilityの値
+- `LSIML_b=x: LSIMLの値`:（ジャンプ除去済み）LSIMLの値
+- `Num_jump_b=x`: 検出されたジャンプ回数
+- `Size_jump_b=x`: 検出されたジャンプサイズ
 
 列が含まれる。
 
-尚、xの部分には自分で設定したbの値が保存される。
+尚、`x`の部分には自分で設定した`b`の値が保存される。
 
 ジャンプ除去を行わないLSIMLの値は`LSIML_b=x`列に`Size_jump_b=x`列を加算すれば良い。
 
 出力サンプルは
-`output/output_sample.csv`を参照されたい。
+`output/LSIML_RV_sample.csv`を参照されたい。
 
 ## How to use
 ### データを用意する
@@ -26,10 +26,10 @@
 - `price`
 列が必須である。
 
-具体的な形式は`"data/grid_data/sample.csv"`を参照されたい。
+具体的な形式は`"data/grid_data/grid_data_sample.csv"`を参照されたい。
 
 ### パラメータを設定する
-`setting\parameters.txt`でパラメータを設定する。具体的には
+`setting/parameters.txt`でパラメータを設定する。具体的には
 - `alpha`: SIML, LSIMLを計算する際に用いるα
 - `b`: LSIMLを計算する際に用いるb
 - `overlap_rate`: overlap LSIMLを計算する際に用いる重複比率（デフォルトでは0）
