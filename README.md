@@ -3,14 +3,14 @@ LSIMLを計算するモジュール
 
 ## How to use
 ### データを用意する
-まず、grid_dataフォルダ内に株価のデータを用意する。
+まず、`data/grid_data`フォルダ内に株価のデータを用意する。
 データ形式は等間隔で観測されたもの（例えば、１秒間隔）を仮定している。
 また、
 - date
 - price
 列が必須である。
 
-具体的な形式は`"grid_data/sample.csv"`を参照されたい。
+具体的な形式は`"data/grid_data/sample.csv"`を参照されたい。
 
 ### パラメータを設定する
 `setting\parameters.txt`でパラメータを設定する。具体的には
