@@ -229,5 +229,5 @@ if __name__ == "__main__":
         LSIML_RV_df = Ins.merged_result_df
 
         # 保存用に名称変更
-        stock_name = stock_name.replace("data\\", "")
+        stock_name = stock_name.replace("data/grid_data\\", "")
         LSIML_RV_df.to_csv("output/LSIML_RV_" + stock_name, index=False)
